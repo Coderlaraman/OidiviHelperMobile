@@ -1,0 +1,7 @@
+# Archivos de configuración de Metro y ESLint
+metro.config.js
+.eslintrc.js
+
+# Es buena práctica añadir también otros archivos de configuración
+babel.config.js
+tailwind.config.js
