@@ -1,20 +1,39 @@
-// src/screens/dashboard/DashboardScreen.tsx
+// src/screens/app/DashboardScreen.tsx
 import React from 'react';
-import {View, Text} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useUserAuthContext} from '../../contexts/UserAuthProvider';
-import {Button} from '../../components/ui/Button';
+import {View, Text, Button, StyleSheet} from 'react-native';
+import {useUserAuthContext} from '@/contexts/UserAuthContext';
 
-export default function DashboardScreen() {
+const DashboardScreen = () => {
   const {user, logout} = useUserAuthContext();
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center p-4">
-      <Text className="text-2xl font-bold mb-4 dark:text-white">Dashboard</Text>
-      <Text className="text-lg mb-8 dark:text-gray-300">
-        Welcome, {user?.name}!
-      </Text>
-      <Button label="Logout" onPress={logout} className="bg-red-600 w-full" />
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>¡Bienvenido!</Text>
+      <Text style={styles.email}>{user?.email}</Text>
+      <Button title="Cerrar Sesión" onPress={logout} color="#E53E3E" />
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#181818',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff',
+  },
+  email: {
+    fontSize: 16,
+    marginBottom: 20,
+    color: '#ccc',
+  },
+});
+
+export default DashboardScreen;

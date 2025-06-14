@@ -1,13 +1,17 @@
+// App.tsx (el archivo raíz de tu proyecto)
 import React from 'react';
-import {Text, View} from 'react-native';
-import './global.css';
+import {UserAuthProvider} from './src/contexts/UserAuthContext';
+import {LanguageProvider} from './src/contexts/LanguageProvider';
+import {AppNavigator} from './src/navigation/AppNavigator';
 
-export default function App() {
+const App = () => {
   return (
-    <View>
-      <Text className="flex justify-center font-bold text-red-500 text-xl">
-        Hello Coderman Hello!
-      </Text>
-    </View>
+    <LanguageProvider>
+      <UserAuthProvider>
+        <AppNavigator />
+      </UserAuthProvider>
+    </LanguageProvider>
   );
-}
+};
+
+export default App;

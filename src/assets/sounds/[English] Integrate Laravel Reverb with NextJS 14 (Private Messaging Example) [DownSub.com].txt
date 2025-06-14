@@ -1,0 +1,525 @@
+In this video, we are going 
+to take a look at how we can  
+integrate Laravel Reverb into a Next.js 
+application. In the last video I made,  
+I demonstrated how we can utilize Laravel 
+Reverb using a practical example where  
+we can send and respond to notifications to 
+other users in real time. That example uses  
+the monolith approach where the frontend 
+and backend are in the same repository.
+We used Laravel Breeze for our 
+default scaffolding in that example.  
+After a while, I received a couple of 
+messages from people who asked me how or  
+if we can implement this feature if the frontend 
+is separate from the backend, which is commonly  
+referred to as a decoupled architecture. And the 
+answer to that question is yes, we certainly can.
+But unlike the monolith approach, since most of 
+the configurations are already set out of the box,  
+integrating this into a separate frontend 
+requires a bit more work and configuration.  
+But it's 100% compatible with other 
+frameworks and would definitely work  
+since it adheres to open protocols 
+for WebSocket servers. Whether your  
+frontend framework of choice is Next.js, 
+Nox.js, Gatsby, Svelte, or even Angular.
+Okay, in this example, I created a simple 
+chat application to demonstrate this. Our  
+entire frontend is built with Next.js 14, and 
+our API is powered by Laravel 11. So on the left,  
+this is the product owner, Jake, and on the 
+right side is a software engineer named Kiara.
+So at the top, we have a message icon typical 
+of messaging applications. So let's try to  
+send a message to Kiara. And where is she 
+here? Okay, she's down here at the bottom.
+Let's click the send message button. 
+A pop-up dialogue will appear where  
+we can compose a message. So let's just say, hey,  
+what's up? When we click send, you'll see 
+our message notification pop up at the top.
+There's a subtle animation 
+and an alert notification  
+sound as well. Let's try it again. Send message.
+Another one. Send. And there's our message.
+So when we click this message icon, we will 
+see a simple list of all messages here. So,  
+okay, like I said, our frontend 
+is built using Next.js 14,  
+and our API is powered by Laravel 11. So in 
+this video, we will learn how to use or set up  
+Laravel Reverb for real-time communication using 
+Laravel 11, configured as a backend API only.
+It doesn't have any frontend scaffolding. And 
+our frontend is separate from our backend,  
+which is Next.js. Our approach here is commonly 
+referred to as the decoupled architecture,  
+where the backend codebase is separated from 
+our frontend codebase. And I think it's worth  
+making a video about it because it involves 
+a couple of steps to successfully integrate  
+Laravel Reverb on a separate frontend framework 
+like Next.js. So these are our two codebases.
+On the left, this is our Laravel API. And on 
+the right, this is our Next.js 14 codebase.  
+You can see in the composer.json file that this 
+is Laravel 11 at the time of this recording.
+And in our Next.js app, this is Next.js 14.2.3 at 
+the time of this recording. So now the frontend  
+scaffolding I used is Laravel Breeze. This is the 
+official package or authentication scaffolding  
+provided by Laravel for Next.js. If we zoom in and 
+visit the official GitHub repository, you can see  
+it says that this is the authentication starter 
+kit frontend in Next.js for Laravel Breeze.
+So if you want to use this, you can follow 
+the instructions here. In the introduction,  
+it says this repository is an implementation 
+of the Laravel Breeze application and the  
+authentication starter kit. It 
+also includes Laravel Sanctum to  
+make it easier to pair our Next.js 
+frontend with our Laravel backend.
+But this is entirely optional. If you want to 
+use your own files or project, you can do that  
+as well. We will only discuss how to implement 
+Laravel Reverb to use in our frontend framework,  
+which is separate from our backend.
+So in the readme file, you'll 
+find the installation steps.  
+They are pretty easy to follow. 
+All right, let's get started.
+Okay, first go to the terminal and navigate to the 
+root directory of our Next.js application. Let's  
+install Laravel Echo and the pusher package. 
+Run npm install Laravel echo and pusher.js.  
+Laravel Echo is the official package library 
+that makes it easier for us to subscribe to  
+channels and listen to broadcasting events 
+coming from our Laravel powered backend.
+After the installation, once you have 
+set up Laravel to serve adjust as an API,  
+install the Laravel broadcasting package by 
+running php artisan install broadcasting.  
+I've already installed it, so I won't 
+have to do it again here. So let's go  
+back to our Next.js application and run 
+our development server with npm run dev.
+Once it starts, check it in the browser 
+and refresh both browsers. Okay,  
+it's working. Then don't forget to also start our 
+Laravel backend server with php artisan serve.
+So our Laravel backend server is 
+now running on localhost port 8000,  
+while our Next.js server is assigned 
+to port 3000. I'm just going to log in  
+both of our users. Okay, I've logged in 
+as a product owner on the left side and  
+on the right side is another user who 
+is a software engineer, for example.
+By the way, if you want to use 
+the project files I'm using here,  
+I'll link them in the video description. 
+This way you can try it yourself if you  
+want to follow along with what I'm 
+doing here. In the Laravel codebase,  
+I've also included the database headers 
+so we have some example data to work with.
+Okay, let's begin. The first steps we'll take 
+are copying the configuration files of Laravel  
+Echo into our Next.js application. So in the 
+environment files of our Laravel application,  
+if you installed Laravel Broadcasting and 
+Laravel Echo during the installation steps,  
+Laravel will automatically provide these values.
+Copy them, then in our Next.js application, 
+paste them into the environment file and  
+let's just match the values to the pattern used 
+in the Next.js env file. So each line should  
+start with a keyword next underscore public. 
+So line by line, paste the values like this.
+Next, let's copy the Echo 
+configuration settings so  
+we can initialize Laravel Echo in our Next.js app.  
+Okay here, create a temporary file in the 
+app directory called echo.js. Paste the  
+settings here. This will be temporary and 
+we'll reference it later when we create a  
+custom hook to call Echo for broadcasting 
+or to receive events from the server.
+Modify the configuration settings 
+here. Instead of import.meta,  
+we'll use process.env. And of course, we'll 
+change the names of the configuration values.  
+Instead of vit underscore, we'll use next 
+underscore public underscore like this.
+We'll match the configuration keys 
+in our Next.js env file. Okay,  
+the next step is to go to our Laravel 
+API codebase. Under the channels route,  
+change the channel name where we'll 
+subscribe to real-time events.
+Let's name it chat and also ensure 
+that the broadcasting connection is  
+set to reverb in our env file. Then 
+go to the config file and check the  
+course configuration settings. If Laravel is 
+properly configured to serve as an API only,  
+you should see the local host and port 3000 in the 
+allowed origins where our Next.js app is running.
+Make sure the supports credentials variable 
+is set to true. Now, another important step  
+we need to do. And please be patient guys 
+because when our front end is separated  
+from our back end, we have quite a bit 
+to configure to make our project work.
+So in the browser, let's visit the 
+official Laravel documentation. Go  
+to the sanctum documentation and then 
+under SPA authentication. At the end,  
+there's an authorization private 
+broadcast channel section.
+Here, there's a couple of steps we need to 
+take, particularly registering the channels  
+route in the middleware. So let's copy the with 
+broadcasting method. Then in our middleware,  
+which is located in the bootstrap 
+directory, open the app.php file.
+We need to disable the channels entry 
+here in the with routing function.  
+Scroll down and paste the broadcasting method.  
+This registers our channels route to 
+properly resolve to our API endpoints.
+Since we are using Laravel for API only, 
+we'll automatically have an API prefix in  
+our endpoints. Next, we need to handle the 
+pusher authorization request to ensure that  
+our authorization request will succeed when 
+initializing Laravel echo from our Next.js  
+front end. So let's copy the authorizer 
+function of our echo configuration.
+Then go to our Next.js app. In our 
+echo instance, under the key option,  
+paste the authorizer function here. 
+We can delete the options argument.
+We don't need this here. And as you can see, 
+this calls the endpoint API broadcasting auth,  
+which includes the API prefix. This is because our 
+Laravel back end is configured to use API only.
+So all API endpoint will automatically 
+include the API prefix. So after all  
+these configuration steps, let's 
+go to our browsers and refresh  
+the pages. You'll notice that our 
+message icon is in the navigation.
+This is where we'll listen for events from our 
+back end to receive messages from the sender.  
+In the navigation file, I have 
+some pre-built functions here,  
+such as playing a sound and triggering animations 
+when we receive messages, as well as a couple of  
+states. Upon loading this component, we make 
+an Axios request to fetch the unread messages.
+In our library folder, there's an instance 
+of Axios created already if you use the  
+Breeze Next.js scaffolding. That contains 
+basic configurations such as our base URL,  
+which is localhost, or 3000. And we also 
+have headers, configurations, and more.
+This instance is used for every HTTP 
+request. You'll see in our navigation  
+file that it is imported at the 
+top. Inside the useEffect hook,  
+this is where we are going to 
+listen for real-time events.
+So what we are going to do is use Laravel echo in 
+the useEffect hook of the navigation component,  
+so that when our component loads, it automatically 
+listens for real-time events from our Laravel API.  
+To do this, we'll create a custom hook for Laravel 
+echo. In the hooks folder of our Next.js app,  
+there's already a default custom hook provided by 
+the Laravel team if you use the Breeze scaffolding  
+for Next.js. It's pretty basic and is used for 
+login requests, reset password requests, etc.
+Now let's create a new file in the hooks 
+folder and name it echo.js. So in this  
+file, let's create a function called 
+useEcho and also create a state called  
+echoInstance along with its setter function 
+setEchoInstance. Let's initialize it to null.  
+Under the useEffect hook, this is 
+where we'll initialize Laravel echo.
+Now in the temporary file we created earlier 
+in echo.js inside the app directory, let's  
+first copy the import statements. Then we'll 
+place our echo instance in the useEffect hook.  
+We'll update the echo instance state 
+using setEchoInstance and set it to echo.
+Finally, let's export our useEcho function 
+itself and of course don't forget to return  
+the echo instance state here. 
+So it's a pretty basic custom  
+hook in React. Now inside our navigation 
+component, let's import our custom hook.
+To initialize it, let's create a variable called 
+echo equals useEcho. Then inside the useEffect,  
+we'll use it here. We'll check if the 
+echo instance has been initialized.
+If it has, that's when we'll call 
+our private function to subscribe  
+to our chat channel. Using echo.private, 
+specify our channel name. If you watched  
+my recent video about Laravel 
+reverb, you know how to do this.
+Then we'll call the listen function, 
+specifying the event name where our  
+echo instance will listen. And 
+the event payload will contain  
+the content of our event. This will be 
+the messages, the sender, and so on.
+For now, let's just log the content of our event 
+payload to the console and let's name our event,  
+say, messageSent. So next, we need 
+to create this event class in our  
+Laravel API. Let's modify 
+our console logging a bit.
+Let's say real-time event received. Now 
+let's create our event class to broadcast  
+the event to our frontend. In our Laravel 
+codebase, let's close these tabs for now.
+Then in our terminal, let's create an 
+event using phpArtSend.makeEvent. Let's  
+name our event messageSent. This is 
+what our Laravel backend will emit to  
+our Next.js frontend. So after that, we'll 
+have a new event class in our app folder,  
+under the events folder, and this 
+is our messageSent event class.
+First, don't forget to implement 
+the shouldBroadcast contract. This  
+is essential for broadcasting our event to our 
+frontend. And then in the broadcastOn method,  
+let's specify the name of 
+our channel, which is chat.
+Then we need to specify the id of our receiver 
+in our channel. Before that, inside the construct  
+function, let's place the payload of our event. 
+This is the data we'll broadcast to our frontend.
+First is the receiver. Let's declare it as a 
+public property. Second data is our sender,  
+and the third is the actual message 
+we'll send, which is just a string.
+Now back in our channel name, let's specify the 
+id of our receiver who will receive the message.  
+This way, we can properly broadcast the 
+event to the correct recipient. So when  
+you revisit our channel's route, you'll 
+see that we have an id parameter here,  
+or argument, to verify who 
+can listen to our channel.
+Okay, our event class looks good 
+now. The next step is, of course,  
+we need to broadcast our event to our frontend. 
+Here I've created a basic chat message controller,  
+and in the store method, this is where we're 
+going to broadcast the event to our frontend.
+First, let's construct the payload 
+we'll send. Fetch the receiver,  
+who is the recipient, of course, of the 
+message. Then the sender of the message.
+Now let's call the broadcast helper 
+function, and instantiate the message event.  
+Then we'll need to pass our arguments, 
+which are the receiver, the sender,  
+and the message itself. The third argument.
+Finally, we'll just return an empty 
+response using the no content function,  
+because we don't need to return any data in our 
+chat app. All the payload is broadcasted to our  
+frontend. Now our API call to send message 
+is executed here on our dashboard page.
+I've already written the code 
+to save some time. Here's the  
+Axios request to send a message. We'll 
+simply pass the necessary parameters,  
+the user id of the receiver who sent the 
+message, and the actual message itself.
+Pretty basic. Then down here in our model, we 
+call the function. We have a text area here,  
+and at the bottom, we call 
+the send message function.
+Let's try it out. First, let's start 
+our reverb server. In the terminal,  
+in our Latavel API root directory, execute 
+the command php artisan reverb start.
+Then pass an additional flag, the debug 
+flag, so we can see the incoming events.  
+Make sure our backend server is running as 
+well. We also need to start a queue worker.
+Say php artisan queue listen. 
+Okay, in the database,  
+we have a chat messages table. This 
+is where our messages will be saved.
+Okay, let's try it out. In our browsers, let's 
+refresh the pages. Then let's open the browser  
+console to check if there are any errors or 
+if we are receiving events from our backend.
+Let's send a message to Chiara. And where is she? 
+Okay, she is at the bottom. Let's send a message.
+Let's say, what's up? Send. And the 
+message isn't being sent to Chiara.  
+So what could be happening here? 
+Well, the issue is that we need to  
+pass an authorization token to our 
+broadcasting authentication route.
+This is another step we need to do in order 
+to make this work. So we need to configure  
+our Latavel backend to issue an API token that 
+will attach to the header of our request to  
+authorize us to access our broadcasting route. 
+Fortunately, this is very easy to do in Latavel.
+So let's go to our Latavel codebase. In our user 
+model, all we need to do is use the has API token  
+straight, which is already available in 
+Latavel Sanctum when we configure our  
+backend. And next, for every logged in user, 
+we'll attach the API token to our responses.
+In the authenticated sessions controller, 
+here you will find the method for user  
+login. After the regenerate method, we'll 
+attach our token here. So let's say token,  
+then in the request, then we'll get the currently 
+authenticated user, and then create token.
+Let's give our token a label. 
+Let's just say API token,  
+and then we'll output it into a plain 
+text token. Let's return the response.
+And then in the response, we'll add a cookie, 
+and here we'll attach our token. Then we'll  
+pass the token variable. In the third argument, 
+we can specify the expiration time of our token.
+For now, let's say 60. You can also 
+configure it as a non-expiring token,  
+but for our example, let's just say 60 minutes. 
+And let's comment out this response below.
+Okay, it's time to intercept this 
+in our frontend. Let's go to our  
+Next.js codebase. Remember, we have an 
+Axios instance created in this file.
+Here, we'll attach our API token to the 
+headers. This is our Axios instance,  
+and remember in our custom hook, we call 
+this API broadcasting auth route. So we  
+need to attach our authorization token in 
+the request header, which we created earlier.
+Let's go back to our Axios instance, and 
+create a method called setBearerToken,  
+say Axios.defaults.headers.common, and 
+the type of the header is authorization,  
+and this is going to be a bearer token. Using 
+string interpolation, we'll pass the token  
+here. This is the label, and of course we need to 
+accept the token as an argument in our function.
+So this function is setBearerAuthToken, and 
+we need to export these two name exports from  
+the module so it can be used in other modules. 
+Since we changed the export, we need to update  
+all our import statements of Axios. First, in our 
+custom hook, then in our navigation component,  
+and here in our dashboard page, we also use 
+Axios, and finally in our auth custom hook.
+In our authorization hook, we'll also export the 
+setBearerToken so we can use the function here,  
+because this is where we are going to 
+intercept the API token from our backend.  
+This is where the login route was executed. 
+So here below, we have our login function.
+As you can see, after we log in, this is where 
+we fetch our API token. So setBearerToken,  
+then res.data, and then the name of the token 
+is token. Remember, this is our login route.
+So now every time we log in, our API token is 
+automatically set in the header, and here in our  
+custom hook for LatableEcho, in our post request 
+to our API broadcasting authentication route,  
+our token is automatically attached to the header. 
+Okay, after all of this setup, this is the moment  
+of truth. Let's go back to our browsers, 
+refresh the pages, and let's try it out again.
+Let's go down here. Here is Chiara. 
+Let's send a message to her.
+Send message. Let's say, hello there. Send.
+And then you'll see here in our console,  
+here's our real-time event payload. 
+So without refreshing the page,  
+we received the payload. So the final part is 
+to display the notification on our chat icon.
+So let's go back to our Next.js codebase, 
+in the navigation component. This is our  
+function to trigger the animation, 
+and then after receiving the payload,  
+we'll call this function. For example, 
+let's call it handleEchoCallback.
+Let's create the function here. 
+Let's call the setUnreadMessages.  
+We have a state here that I've already set up.
+Basically, it's just a count of unread 
+messages we have received. So what we'll  
+do is to increment this every time we 
+receive a new message. So let's say,  
+prevUnread, and then we'll just 
+increment the current value.
+And then we'll also trigger the animation 
+and the sound effect here. sound.play. Okay,  
+let's test it again. Refresh the pages,  
+and you'll see there's one message already 
+here, because we have sent one earlier.
+Let's try it again. Send a message 
+to Chiara. Yo, what's cooking? Send.
+Then in real time, there's our new 
+message along with a simple animation  
+and the alert notification sound. 
+Let's try it again. Hello, Chiara.
+Send. Okay, there you go. We are 
+properly receiving the messages,  
+and when we click on the message icon, 
+here are the recently received messages.
+Okay, in this example, we went through quite 
+a few steps compared to the monolith approach  
+in my last video. In the monolith approach, 
+everything we needed to implement lateral reverb  
+for receiving real-time communications using 
+WebSockets was already set up. But this time,  
+since our back-end and front-end 
+code bases are separate, this is  
+what others commonly refer to as a decoupled 
+architecture, we had to do a bit more steps.
+But as you can see in this example, 
+it's not that difficult. Okay,  
+so that's it, guys. I hope you learned 
+something new from our simple example.
+And for those of you who have been asking 
+how to implement lateral reverb in a lateral  
+application where the front-end is separated 
+from the back-end, this is how you do it.  
+And you can also use lateral reverb not 
+just in the Nuxt.js applications. You  
+can also use it if you are using a front-end 
+framework like Vue and Nuxt.js, for example.
+The concept of integrating lateral 
+reverb is exactly the same. The same  
+is true if you are using other 
+frameworks like Svelte, Gatsby,  
+or even Angular, as long as you can pull 
+npm packages. You can use lateral reverb  
+in your projects regardless of the 
+front-end framework you're using.
+Okay, guys, if you like the video and find it 
+useful, kindly do me a favor and please like this  
+video. And you can also consider subscribing if 
+you haven't already. Thank you for watching, guys.
+See you next time.

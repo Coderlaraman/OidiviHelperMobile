@@ -13,13 +13,17 @@ import {
   requestPasswordReset,
   resetPassword as resetPasswordApi,
   requestEmailVerification,
-} from '../api/user'; // Asegúrate que la ruta es correcta
-import {LoginCredentials, RegisterCredentials, User} from '../types/user/user';
+} from '../lib/api/user'; // Asegúrate que la ruta es correcta
+import {
+  LoginCredentials,
+  RegisterCredentials,
+  User,
+} from '../lib/types/user/user';
 
 export const useUserAuth = () => {
   const {t} = useLanguage();
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   // El estado de isAuthenticated se deriva directamente de si 'user' existe.
   // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false); // No es necesario, podemos derivarlo
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +36,6 @@ export const useUserAuth = () => {
       const token = await AsyncStorage.getItem('user_auth_token');
       if (token) {
         try {
-          setIsLoading(true);
           const response = await getCurrentUser();
           if (response.success && response.data) {
             setUser(response.data);
@@ -96,11 +99,52 @@ export const useUserAuth = () => {
           // El hook solo informa del éxito.
           return true;
         } else {
-          setError(response.message || t('error.login_failed'));
+          // Capturar mensajes específicos como cuenta deshabilitada
+          const errorMsg = response.message || t('error.login_failed');
+
+          // Verificar si el mensaje contiene información sobre cuenta deshabilitada
+          const isDisabledAccount =
+            errorMsg.toLowerCase().includes('deshabilitada') ||
+            errorMsg.toLowerCase().includes('disabled');
+
+          if (isDisabledAccount) {
+            const formattedMsg = t('error.accountDisabled');
+            console.warn('[Auth] Cuenta deshabilitada detectada');
+            setError(formattedMsg);
+          } else {
+            console.warn('[Auth] Login failed with message:', errorMsg);
+            setError(errorMsg);
+          }
+
           return false;
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : t('error.login_failed'));
+        // Mejorar el mensaje de error para el usuario
+        let errorMessage = t('error.login_failed');
+
+        // Verificar si es un error con mensaje
+        if (e instanceof Error) {
+          // Verificar si el mensaje contiene información sobre cuenta deshabilitada
+          if (
+            e.message.toLowerCase().includes('deshabilitada') ||
+            e.message.toLowerCase().includes('disabled')
+          ) {
+            errorMessage = t('error.accountDisabled');
+            console.warn('[Auth] Cuenta deshabilitada detectada en error:', {
+              name: e.name,
+            });
+          } else {
+            errorMessage = e.message || errorMessage;
+            console.error('[Auth] Login error:', {
+              message: e.message,
+              name: e.name,
+            });
+          }
+        } else {
+          console.error('[Auth] Login error (unknown type):', e);
+        }
+
+        setError(errorMessage);
         return false;
       } finally {
         setIsLoading(false);

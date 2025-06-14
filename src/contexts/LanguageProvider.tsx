@@ -1,17 +1,17 @@
 // src/contexts/LanguageProvider.tsx
 import React, {createContext, useContext, useState, ReactNode} from 'react';
-import {en} from '../translations//en';
+import {en} from '../translations/en';
 import {es} from '../translations/es';
-// import { fr } from "@/translations/fr"; // Descomenta cuando los tengas
-// import { pt } from "@/translations/pt"; // Descomenta cuando los tengas
+import {fr} from '../translations/fr';
+import {pt} from '../translations/pt';
 import {
   LanguageContextType,
   SupportedLanguages,
   TranslationType,
   NestedValue,
-} from '../types/translations';
+} from '../lib/types/translations';
 
-const translations: Record<string, TranslationType> = {en, es};
+const translations: Record<string, TranslationType> = {en, es, fr, pt};
 
 function getTranslationValue(
   obj: NestedValue,
