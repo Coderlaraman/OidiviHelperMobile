@@ -71,7 +71,7 @@ export const pt = {
       active: "Serviços Ativos",
       allServices: "Todos os Serviços",
       bulkActions: "Ações em Massa",
-      cancelled: "Serviços Cancelados",
+      canceled: "Serviços Cancelados",
       completed: "Serviços Concluídos",
       export: "Exportar Serviços",
       filter: "Filtrar Serviços",
@@ -1526,7 +1526,7 @@ export const pt = {
       titleFor: "Ofertas para «{{title}}»",
     },
     status: {
-      cancelled: "Cancelada",
+      canceled: "Cancelada",
       completed: "Concluída",
       draft: "Rascunho",
       in_progress: "Em Andamento",

@@ -71,7 +71,7 @@ export const en = {
       active: "Active Services",
       allServices: "All Services",
       bulkActions: "Bulk Actions",
-      cancelled: "Cancelled Services",
+      canceled: "Canceled Services",
       completed: "Completed Services",
       export: "Export Services",
       filter: "Filter Services",
@@ -1512,7 +1512,7 @@ export const en = {
       titleFor: "Offers for «{{title}}»",
     },
     status: {
-      cancelled: "Cancelled",
+      canceled: "Canceled",
       completed: "Completed",
       draft: "Draft",
       in_progress: "In Progress",

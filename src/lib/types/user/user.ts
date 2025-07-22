@@ -193,7 +193,7 @@ export interface UserDashboard {
     pending: number;
     in_progress: number;
     completed: number;
-    cancelled: number;
+    canceled: number;
   };
 }
 

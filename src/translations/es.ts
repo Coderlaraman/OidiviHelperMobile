@@ -71,7 +71,7 @@ export const es = {
       active: "Servicios Activos",
       allServices: "Todos los Servicios",
       bulkActions: "Acciones Masivas",
-      cancelled: "Servicios Cancelados",
+      canceled: "Servicios Cancelados",
       completed: "Servicios Completados",
       export: "Exportar Servicios",
       filter: "Filtrar Servicios",
@@ -1529,7 +1529,7 @@ export const es = {
       titleFor: "Ofertas para «{{title}}»",
     },
     status: {
-      cancelled: "Cancelada",
+      canceled: "Cancelada",
       completed: "Completada",
       draft: "Borrador",
       in_progress: "En Progreso",
